@@ -3,16 +3,26 @@ export interface LoginFormInputs {
   password: string;
 }
 
+interface Company {
+  id: number;
+  name: string;
+}
+
 export interface LoginResponse {
   data: {
-    accessToken: string;
     id: number;
-    email: string;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
     name: string;
+    password: string;
+    email: string;
     role: string;
-    company: {
-      id: number;
-      name: string;
-    };
+    isSubscribed: boolean;
+    lang: string;
+    passwordKey: string;
+    company: Company;
+    accessToken: string;
   };
+  message: string;
 } 
