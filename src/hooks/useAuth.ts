@@ -11,14 +11,18 @@ async function loginUser(credentials: LoginFormInputs): Promise<LoginResponse> {
   });
 
   if (!response.ok) {
-    throw new Error('Login failed');
+    const error = await response.json();
+    throw new Error(error.message || 'Login failed');
   }
 
   return response.json();
 }
 
 export function useLogin() {
-  return useMutation({
-    mutationFn: loginUser
+  return useMutation<LoginResponse, Error, LoginFormInputs>({
+    mutationFn: loginUser,
+    onSuccess: (data) => {
+      localStorage.setItem('accessToken', data.data.accessToken);
+    }
   });
 } 
