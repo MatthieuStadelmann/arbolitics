@@ -1,14 +1,15 @@
 "use client";
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { getAuthToken } from '@/utils/auth';
+import { AuthContextType } from '@/types/contexts';
 
-interface AuthContextType {
-  isAuthenticated: boolean;
-  setIsAuthenticated: (value: boolean) => void;
-  isLoading: boolean;
-}
+const defaultContext: AuthContextType = {
+  isAuthenticated: false,
+  setIsAuthenticated: () => {},
+  isLoading: true
+};
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType>(defaultContext);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);

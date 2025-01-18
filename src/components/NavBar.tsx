@@ -3,14 +3,16 @@ import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
 import { clearAuth } from "@/utils/auth";
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
 
 export function NavBar() {
   const { isAuthenticated, setIsAuthenticated } = useAuth();
+  const router = useRouter();
 
   const handleLogout = () => {
     clearAuth();
     setIsAuthenticated(false);
-    window.location.href = "/";
+    router.push('/');
   };
 
   return (

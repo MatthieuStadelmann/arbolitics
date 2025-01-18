@@ -1,5 +1,12 @@
 import { NextResponse } from 'next/server';
 
+/**
+ * MOCK LOGIN ENDPOINT - FOR TESTING PURPOSES ONLY
+ * 
+ * This endpoint provides a mock authentication response used exclusively in test environments.
+ * 
+ * @see src/components/__tests__/LoginForm.test.tsx for usage
+ */
 export async function POST(request: Request) {
   try {
     const body = await request.json();
