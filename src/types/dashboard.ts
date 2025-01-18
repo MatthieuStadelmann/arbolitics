@@ -1,5 +1,7 @@
+import { TimeRange as ArboTimeRange } from "@/constants/arbo";
+
 export interface TimeRange {
-  id: string;
+  id: ArboTimeRange;
   label: string;
 }
 
