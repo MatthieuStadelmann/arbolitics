@@ -1,10 +1,12 @@
 "use client";
 import { useState } from 'react';
 import { TimeRange, Device } from '@/types/dashboard';
+import { useArboData } from '@/hooks/useArboData';
 
 export function DashboardPage() {
   const [selectedTimeRange, setSelectedTimeRange] = useState<string>('daily');
   const [selectedDevices, setSelectedDevices] = useState<string[]>([]);
+  const { data, isLoading, error } = useArboData(10, 1);
 
   const timeRanges: TimeRange[] = [
     { id: 'daily', label: 'Daily' },
@@ -16,6 +18,39 @@ export function DashboardPage() {
     { id: '25_225', name: 'Device 25_225', isActive: true },
     { id: '25_226', name: 'Device 25_226', isActive: true },
   ];
+
+  const renderData = () => {
+    if (isLoading) {
+      return <div className="flex h-64 items-center justify-center">Loading...</div>;
+    }
+
+    if (error) {
+      return (
+        <div className="flex h-64 items-center justify-center text-red-500">
+          Error: {error.message}
+        </div>
+      );
+    }
+
+    if (!data || !Array.isArray(data.data)) {
+      console.log('Received data:', data);
+      return <div className="flex h-64 items-center justify-center">No data available</div>;
+    }
+
+    return (
+      <pre className="h-64 overflow-auto text-sm">
+        {JSON.stringify(
+          data.data.map(d => ({
+            device: d.DID,
+            temperature: d.tem1,
+            time: new Date(d.TMS).toLocaleString()
+          })),
+          null,
+          2
+        )}
+      </pre>
+    );
+  };
 
   return (
     <div className="p-8">
@@ -73,18 +108,12 @@ export function DashboardPage() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div className="rounded-lg bg-white p-6 shadow-lg">
           <h2 className="mb-4 text-xl font-normal">Temperature Trends</h2>
-          {/* Placeholder for temperature chart */}
-          <div className="flex h-64 items-center justify-center rounded bg-gray-100">
-            Temperature Chart will go here
-          </div>
+          {renderData()}
         </div>
 
         <div className="rounded-lg bg-white p-6 shadow-lg">
           <h2 className="mb-4 text-xl font-normal">Humidity & Anomalies</h2>
-          {/* Placeholder for humidity chart */}
-          <div className="flex h-64 items-center justify-center rounded bg-gray-100">
-            Humidity Chart will go here
-          </div>
+          {renderData()}
         </div>
       </div>
     </div>
