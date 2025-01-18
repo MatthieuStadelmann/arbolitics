@@ -1,34 +1,35 @@
 import { NextResponse } from 'next/server';
 
-/**
- * MOCK LOGIN ENDPOINT - FOR TESTING PURPOSES ONLY
- * 
- * This endpoint provides a mock authentication response used exclusively in test environments.
- * 
- * @see src/components/__tests__/LoginForm.test.tsx for usage
- */
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    
-    return NextResponse.json({
-      data: {
-        accessToken: 'mock-token',
-        id: 1,
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
         email: body.email,
-        name: 'Test User',
-        role: 'user',
-        company: {
-          id: 1,
-          name: 'Test Company'
-        }
-      }
+        password: body.password
+      })
     });
-  } catch (err) {
-    console.error('Login error:', err);
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return NextResponse.json(
+        { message: data.message || 'Authentication failed' },
+        { status: response.status }
+      );
+    }
+
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error('Login error:', error);
     return NextResponse.json(
-      { message: 'Invalid credentials' },
-      { status: 401 }
+      { message: 'Internal server error' },
+      { status: 500 }
     );
   }
 } 
