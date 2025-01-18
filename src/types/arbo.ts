@@ -11,8 +11,12 @@ export interface ArboDataPoint {
     wins: number;
     lwet: number;
 }
-  
-export interface ArboDataResponse {
+
+export interface ArboApiResponse {
     data: ArboDataPoint[];
-    message: string;
+    message?: string;
+}
+
+export interface ArboDataResponse {
+    [key: `device_${string}`]: ArboDataPoint[];
 }

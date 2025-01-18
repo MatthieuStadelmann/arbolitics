@@ -1,10 +1,12 @@
+import { ARBOLITICS_LOGIN_ENDPOINT } from '@/constants/arbo';
 import { NextResponse } from 'next/server';
+import { ERROR_MESSAGES } from '@/constants/errors';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${ARBOLITICS_LOGIN_ENDPOINT}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -19,7 +21,7 @@ export async function POST(request: Request) {
 
     if (!response.ok) {
       return NextResponse.json(
-        { message: data.message || 'Authentication failed' },
+        { message: data.message || ERROR_MESSAGES.AUTH_FAILED },
         { status: response.status }
       );
     }
@@ -28,7 +30,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json(
-      { message: 'Internal server error' },
+      { message: ERROR_MESSAGES.INTERNAL_SERVER },
       { status: 500 }
     );
   }
