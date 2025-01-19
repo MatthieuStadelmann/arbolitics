@@ -2,7 +2,6 @@ import ReactECharts from "echarts-for-react";
 import { TemperatureChartProps } from "@/types/chart";
 import { createChartOptions } from "@/config/chart";
 import { useTemperatureChart } from "@/hooks/useTemperatureChart";
-import { StatsOverlay } from "@/components/StatsOverlay";
 
 export function TemperatureChart({
   data,
@@ -13,19 +12,18 @@ export function TemperatureChart({
     timeRange,
   });
 
+
   const options = createChartOptions(
     xAxisLabels,
     yAxisMin,
     yAxisMax,
     series,
+    timeRange
   );
+
 
   return (
     <div>
-      <StatsOverlay
-        data={series.flatMap((s) => s.data)}
-        label="Temperature"
-      />
       <ReactECharts
         key={JSON.stringify(series)}
         option={options}

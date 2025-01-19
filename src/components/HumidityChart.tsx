@@ -1,7 +1,6 @@
 import ReactECharts from 'echarts-for-react';
 import { ArboDataPoint } from '@/types/arbo';
 import { useHumidityChart } from '@/hooks/useHumidityChart';
-import { StatsOverlay } from '@/components/StatsOverlay';
 
 interface HumidityChartProps {
   data: ArboDataPoint[];
@@ -82,14 +81,9 @@ export function HumidityChart({ data, selectedDevices, timeRange }: HumidityChar
 
   return (
     <div>
-      <StatsOverlay 
-        data={series.flatMap(s => s.data)}
-        unit="%"
-        label="Humidity"
-      />
       <ReactECharts
         option={options}
-        style={{ height: "400px" }}
+        style={{ height: "600px" }}
         key={JSON.stringify(series)}
       />
     </div>

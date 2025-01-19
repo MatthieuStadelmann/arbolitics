@@ -13,8 +13,8 @@ export function useDashboard() {
 
   const timeRanges: TimeRange[] = [
     { id: TIME_RANGES.DAILY, label: "Last 24 hours" },
-    { id: TIME_RANGES.WEEKLY, label: "Last 7 days" },
-    { id: TIME_RANGES.MONTHLY, label: "Last 4 weeks" },
+    { id: TIME_RANGES.WEEKLY, label: "Last week" },
+    { id: TIME_RANGES.MONTHLY, label: "Last month" },
   ];
 
   const devices: Device[] = [

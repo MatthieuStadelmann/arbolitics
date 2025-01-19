@@ -10,3 +10,12 @@ export interface Device {
   name: string;
   isActive: boolean;
 } 
+
+export interface DashboardFiltersProps {
+  timeRanges: TimeRange[];
+  devices: Device[];
+  selectedTimeRange: string;
+  selectedDevices: string[];
+  onTimeRangeChange: (value: string) => void;
+  onDeviceChange: (value: string) => void;
+} 

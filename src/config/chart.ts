@@ -1,3 +1,4 @@
+import { TIME_RANGES } from "@/constants/arbo";
 import { ChartSeries, TooltipParams } from "@/types/chart";
 
 export const createChartOptions = (
@@ -5,6 +6,7 @@ export const createChartOptions = (
   yAxisMin: number,
   yAxisMax: number,
   series: ChartSeries[],
+  timeRange: string
 ) => ({
   title: {
     text: `Temperature Trends`,
@@ -45,7 +47,9 @@ export const createChartOptions = (
   },
   xAxis: {
     type: "category",
-    data: xAxisLabels,
+    data: timeRange === TIME_RANGES.WEEKLY ? xAxisLabels.slice(-7) : timeRange === TIME_RANGES.MONTHLY ? xAxisLabels.slice(-4) : xAxisLabels,
+    boundaryGap: false,  
+
     axisLabel: {
       rotate: window.innerWidth < 600 ? 45 : xAxisLabels.length > 12 ? 45 : 0,
       interval: 'auto',

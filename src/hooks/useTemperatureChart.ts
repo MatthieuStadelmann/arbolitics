@@ -17,18 +17,16 @@ export function useTemperatureChart({ data, timeRange }: UseTemperatureChartProp
         .sort((a, b) => a.TMS - b.TMS),
       timeRange
     );
+    const activeDevice = [...device225, ...device226];
+    const xAxisLabels = [...new Set(activeDevice.map((d) => formatDate(d.TMS, timeRange)))];
 
-    const activeDevice = device225.length > 0 ? device225 : device226;
-    const xAxisLabels = activeDevice.map((d) => formatDate(d.TMS, timeRange));
-
-    const allTemps = [...device225, ...device226].map((d) => d.tem1);
+    const allTemps = activeDevice.map((d) => d.tem1);
     const tempMin = Math.min(...allTemps);
     const tempMax = Math.max(...allTemps);
     const buffer = Math.max(2, (tempMax - tempMin) * 0.2);
     const yAxisMin = Math.floor(tempMin - buffer);
     const yAxisMax = Math.ceil(tempMax + buffer);
     
-
     const series: ChartSeries[] = [
       device225.length > 0 && {
         name: "Device 25_225",
