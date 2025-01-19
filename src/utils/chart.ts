@@ -1,61 +1,142 @@
 import { ArboDataPoint } from "@/types/arbo";
 import { TIME_RANGES } from "@/constants/arbo";
-import { Unit } from "@/types/chart";
-
 export const decodeTemperature = (value: number): number => {
   return Number((value / 10).toFixed(1));
 };
 
-export const convertTemperature = (temp: number, unit: Unit): number => {
-  const decodedTemp = decodeTemperature(temp);
-  return Number((unit === "F" ? (decodedTemp * 9) / 5 + 32 : decodedTemp).toFixed(1));
-};
 
 export const formatDate = (timestamp: number, timeRange: string): string => {
-  const date = new Date(timestamp * 1000);
-  return timeRange === TIME_RANGES.DAILY
-    ? date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-    : date.toLocaleDateString([], { month: "short", day: "numeric" });
-};
-
-export const aggregateData = (dataset: ArboDataPoint[], timeRange: string): ArboDataPoint[] => {
-  if (timeRange === TIME_RANGES.DAILY) {
-    return dataset.map(d => ({
-      ...d,
-      tem1: decodeTemperature(d.tem1)
-    }));
-  }
-
-  const grouped: Record<string, ArboDataPoint[]> = {};
-
-  dataset.forEach((d) => {
-    const date = new Date(d.TMS * 1000);
-    let period;
-
+    const date = new Date(timestamp * 1000);
+    
+    if (timeRange === TIME_RANGES.DAILY) {
+      return date.toLocaleTimeString("en-GB", { 
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "Europe/Berlin"
+      });
+    } 
+  
     if (timeRange === TIME_RANGES.WEEKLY) {
-      date.setHours(0, 0, 0, 0);
-      period = date.toISOString().split('T')[0];
-    } else {
-      const day = date.getDay();
-      const diff = date.getDate() - day + (day === 0 ? -6 : 1);
-      const monday = new Date(date.setDate(diff));
-      period = monday.toISOString().split('T')[0];
+      return date.toLocaleDateString("en-GB", { 
+        weekday: "short",  
+        day: "2-digit",
+        month: "short", 
+        timeZone: "Europe/Berlin"
+      });
+    } 
+  
+    if (timeRange === TIME_RANGES.MONTHLY) {
+      const firstDayOfWeek = new Date(date);
+      firstDayOfWeek.setDate(date.getDate() - date.getDay());
+      
+      return `Week of ${firstDayOfWeek.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        timeZone: "Europe/Berlin"
+      })}`;
     }
+      return date.toLocaleDateString("en-GB", { 
+      day: "2-digit", 
+      month: "short",
+      timeZone: "Europe/Berlin"
+    });
+  };
+  
+  
+  
 
-    if (!grouped[period]) {
-      grouped[period] = [];
+  export const aggregateData = (
+    dataset: ArboDataPoint[],
+    timeRange: string
+  ): ArboDataPoint[] => {
+    if (!dataset.length) return [];
+  
+    switch (timeRange) {
+      case TIME_RANGES.DAILY:
+        return aggregateDaily(dataset);
+      case TIME_RANGES.WEEKLY:
+        return aggregateWeekly(dataset);
+      case TIME_RANGES.MONTHLY:
+        return aggregateMonthly(dataset);
+      default:
+        return dataset;
     }
-    grouped[period].push(d);
-  });
-
-  return Object.entries(grouped)
-    .map(([, points]) => {
-      const avgTemp = points.reduce((sum, p) => sum + decodeTemperature(p.tem1), 0) / points.length;
+  };
+  
+  /**
+   * Daily Aggregation: Returns raw data with converted temperatures.
+   */
+  const aggregateDaily = (dataset: ArboDataPoint[]): ArboDataPoint[] => {
+    return dataset.map((d) => ({
+      ...d,
+      tem1: decodeTemperature(d.tem1),
+    }));
+  };
+  
+  /**
+   * Weekly Aggregation: Averages temperature per day in the week.
+   */
+  const aggregateWeekly = (dataset: ArboDataPoint[]): ArboDataPoint[] => {
+    const grouped: Record<string, ArboDataPoint[]> = {};
+  
+    dataset.forEach((d) => {
+      const date = new Date(d.TMS * 1000);
+      date.setHours(0, 0, 0, 0); // Normalize to start of the day
+      const period = date.toISOString().split("T")[0]; // Group by YYYY-MM-DD
+  
+      if (!grouped[period]) {
+        grouped[period] = [];
+      }
+      grouped[period].push(d);
+    });
+  
+    return calculateAverages(grouped);
+  };
+  
+  /**
+   * Monthly Aggregation: Averages temperature per week.
+   */
+  const aggregateMonthly = (dataset: ArboDataPoint[]): ArboDataPoint[] => {
+    const grouped: Record<string, ArboDataPoint[]> = {};
+  
+    dataset.forEach((d) => {
+      const date = new Date(d.TMS * 1000);
+      const firstDayOfWeek = getMonday(date); // Get Monday of that week
+      const period = firstDayOfWeek.toISOString().split("T")[0];
+  
+      if (!grouped[period]) {
+        grouped[period] = [];
+      }
+      grouped[period].push(d);
+    });
+  
+    return calculateAverages(grouped);
+  };
+  
+  /**
+   * Helper function to calculate average temperature per period.
+   */
+  const calculateAverages = (grouped: Record<string, ArboDataPoint[]>): ArboDataPoint[] => {
+    return Object.entries(grouped).map(([date, points]) => {
+      const avgTemp =
+        points.reduce((sum, p) => sum + decodeTemperature(p.tem1), 0) /
+        points.length;
       const lastPoint = points[points.length - 1];
+  
       return {
         ...lastPoint,
-        tem1: avgTemp
+        TMS: new Date(date).getTime() / 1000, // Convert back to Unix timestamp
+        tem1: avgTemp,
       };
-    })
-    .sort((a, b) => a.TMS - b.TMS);
-}; 
+    });
+  };
+  
+  /**
+   * Helper function to get the Monday of a given date's week.
+   */
+  const getMonday = (date: Date): Date => {
+    const day = date.getDay();
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+    return new Date(date.setDate(diff));
+  };
+  

@@ -1,12 +1,9 @@
 import { ArboDataPoint } from "./arbo";
 import { TimeRange } from "@/constants/arbo";
 
-export type Unit = "C" | "F";
-
 export interface TemperatureChartProps {
   data: ArboDataPoint[];
   timeRange: TimeRange;
-  unit?: Unit;
 }
 
 export interface TooltipParams {
@@ -32,7 +29,6 @@ export interface ChartSeries {
 export interface UseTemperatureChartProps {
   data: ArboDataPoint[];
   timeRange: TimeRange;
-  unit: Unit;
 }
 
 export interface ChartData {

@@ -41,7 +41,7 @@ export function DashboardPage() {
       );
     }
     return (
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-1">
         <div className="rounded-lg bg-white p-6 shadow-lg">
           <TemperatureChart data={data || []} timeRange={selectedTimeRange as TimeRange} />
         </div>

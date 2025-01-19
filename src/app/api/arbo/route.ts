@@ -27,7 +27,6 @@ export async function GET(request: Request) {
     });
 
     const allData = response.data.data;
-    console.log(allData);
 
     return NextResponse.json({
       device_25_225: allData.filter((d: ArboDataPoint) => d.DID === DEVICE_IDS.DEVICE_1),

@@ -22,79 +22,72 @@ interface ChartData {
 }
 
 export function useHumidityChart({ data, selectedDevices, timeRange }: UseHumidityChartProps): ChartData {
+
+
   return useMemo(() => {
     const validSelectedDevices = selectedDevices.filter(d => d !== '');
 
-    // Get aggregated timestamps based on timeRange
+    // 1. Correctly use API timestamps (TMS)
+    const timestamps = [...new Set(data.map(d => d.TMS * 1000))].sort((a, b) => a - b); // Convert to ms
+
+    // 2. Format labels correctly
+    const formatDate = (ts: number, format: Intl.DateTimeFormatOptions) =>
+      new Intl.DateTimeFormat('en-US', format).format(new Date(ts));
+
+    // 3. Generate X-Axis Labels Based on Time Range
     const getAggregatedLabels = () => {
-      const timestamps = [...new Set(data.map(d => d.TMS))].sort((a, b) => a - b);
       if (timeRange === TIME_RANGES.DAILY) {
-        return timestamps.map(ts => 
-          new Date(ts * 1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-        );
+        return timestamps.map(ts => formatDate(ts, { hour: "2-digit", minute: "2-digit" }));
       } else if (timeRange === TIME_RANGES.WEEKLY) {
-        // Group by days
-        return [...new Set(timestamps.map(ts => 
-          new Date(ts * 1000).toLocaleDateString([], { month: 'short', day: 'numeric' })
-        ))];
+        return [...new Set(timestamps.map(ts => formatDate(ts, { month: 'short', day: 'numeric' })))];
       } else {
-        // Group by weeks
         return [...new Set(timestamps.map(ts => {
-          const date = new Date(ts * 1000);
-          const weekStart = new Date(date.setDate(date.getDate() - date.getDay()));
-          return `Week of ${weekStart.toLocaleDateString([], { month: 'short', day: 'numeric' })}`;
+          const date = new Date(ts);
+          const weekStart = new Date(date);
+          weekStart.setDate(date.getDate() - date.getDay());
+          return `Week of ${formatDate(weekStart.getTime(), { month: 'short', day: 'numeric' })}`;
         }))];
       }
     };
 
     const xAxisLabels = getAggregatedLabels();
+    const series: ChartData["series"] = [];
 
-    const series = [];
-    
+    const processDeviceData = (deviceId: string, color: string, deviceLabel: string) => {
+      const filteredData = data.filter(d => d.DID === deviceId).sort((a, b) => a.TMS - b.TMS);
+      
+      const aggregatedData = aggregateData(filteredData, timeRange).map(d =>
+        Number(((d.hum1 + 100) / 2).toFixed(1))
+      );
+
+      if (aggregatedData.length > 0) {
+        series.push({
+          name: deviceLabel,
+          type: 'bar',
+          data: aggregatedData,
+          color
+        });
+      }
+    };
+
     if (validSelectedDevices.length === 0 || validSelectedDevices.includes(DEVICE_IDS.DEVICE_1)) {
-      const device225Data = aggregateData(
-        data.filter(d => d.DID === DEVICE_IDS.DEVICE_1)
-          .sort((a, b) => a.TMS - b.TMS),
-        timeRange
-      ).map(d => Number((d.hum1 / 10).toFixed(1)));
-
-      if (device225Data.length > 0) {
-        series.push({
-          name: "Device 25_225",
-          type: 'bar' as const,
-          data: device225Data,
-          color: '#1890ff'
-        });
-      }
+      processDeviceData(DEVICE_IDS.DEVICE_1, '#1890ff', "Device 25_225");
     }
-    
+
     if (validSelectedDevices.length === 0 || validSelectedDevices.includes(DEVICE_IDS.DEVICE_2)) {
-      const device226Data = aggregateData(
-        data.filter(d => d.DID === DEVICE_IDS.DEVICE_2)
-          .sort((a, b) => a.TMS - b.TMS),
-        timeRange
-      ).map(d => Number((d.hum1 / 10).toFixed(1)));
-
-      if (device226Data.length > 0) {
-        series.push({
-          name: "Device 25_226",
-          type: 'bar' as const,
-          data: device226Data,
-          color: '#ff4500'
-        });
-      }
+      processDeviceData(DEVICE_IDS.DEVICE_2, '#ff4500', "Device 25_226");
     }
 
+    // 5. Compute Y-axis Range (Ensure Min is 0)
     const allHumidity = series.flatMap(s => s.data).filter(Boolean);
-    const humidityMin = Math.min(...allHumidity);
-    const humidityMax = Math.max(...allHumidity);
-    const buffer = 5;
-
+    const humidityMin = 0;
+    const humidityMax = Math.max(100, ...allHumidity);
+    
     return {
       series,
       xAxisLabels,
-      yAxisMin: Math.floor(humidityMin - buffer),
-      yAxisMax: Math.ceil(humidityMax + buffer)
+      yAxisMin: humidityMin,
+      yAxisMax: humidityMax
     };
   }, [data, selectedDevices, timeRange]);
-} 
+}

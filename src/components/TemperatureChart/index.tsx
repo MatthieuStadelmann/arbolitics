@@ -7,12 +7,10 @@ import { StatsOverlay } from "@/components/StatsOverlay";
 export function TemperatureChart({
   data,
   timeRange,
-  unit = "C",
 }: TemperatureChartProps) {
   const { series, xAxisLabels, yAxisMin, yAxisMax } = useTemperatureChart({
     data,
     timeRange,
-    unit
   });
 
   const options = createChartOptions(
@@ -20,22 +18,20 @@ export function TemperatureChart({
     yAxisMin,
     yAxisMax,
     series,
-    timeRange,
-    unit
   );
 
   return (
     <div>
-      <StatsOverlay 
-        data={series.flatMap(s => s.data)}
-        unit={unit}
+      <StatsOverlay
+        data={series.flatMap((s) => s.data)}
         label="Temperature"
       />
       <ReactECharts
         key={JSON.stringify(series)}
         option={options}
-        style={{ height: "400px" }}
+        style={{ height: "600px" }}
       />
     </div>
   );
-} 
+}
+
