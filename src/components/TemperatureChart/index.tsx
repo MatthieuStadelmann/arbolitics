@@ -27,7 +27,7 @@ export function TemperatureChart({
       <ReactECharts
         key={JSON.stringify(series)}
         option={options}
-        style={{ height: "600px" }}
+        style={{ height: "400px" }}
       />
     </div>
   );

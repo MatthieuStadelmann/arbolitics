@@ -1,60 +1,50 @@
 import { useMemo } from 'react';
 import { DEVICE_IDS } from "@/constants/arbo";
 import { ChartSeries, UseTemperatureChartProps, ChartData } from "@/types/chart";
-import { aggregateData, formatDate } from "@/utils/chart";
+import { aggregateData, calculateAxisBounds, formatDate, processDeviceData } from "@/utils/chart";
+import { TEMPERATURE_CHART_CONSTANTS } from '@/constants/chart';
+
 
 export function useTemperatureChart({ data, timeRange }: UseTemperatureChartProps): ChartData {
-
   return useMemo(() => {
-    const device225 = aggregateData(
+    if (!data?.length) {
+      return {
+        series: [],
+        xAxisLabels: [],
+        yAxisMin: 0,
+        yAxisMax: 1
+      };
+    }
+
+    const device225Data = aggregateData(
       data.filter((d) => d.DID === DEVICE_IDS.DEVICE_1)
         .sort((a, b) => a.TMS - b.TMS),
       timeRange
     );
       
-    const device226 = aggregateData(
+    const device226Data = aggregateData(
       data.filter((d) => d.DID === DEVICE_IDS.DEVICE_2)
         .sort((a, b) => a.TMS - b.TMS),
       timeRange
     );
-    const activeDevice = [...device225, ...device226];
-    const xAxisLabels = [...new Set(activeDevice.map((d) => formatDate(d.TMS, timeRange)))];
 
-    const allTemps = activeDevice.map((d) => d.tem1);
-    const tempMin = Math.min(...allTemps);
-    const tempMax = Math.max(...allTemps);
-    const buffer = Math.max(2, (tempMax - tempMin) * 0.2);
-    const yAxisMin = Math.floor(tempMin - buffer);
-    const yAxisMax = Math.ceil(tempMax + buffer);
-    
+    const activeDevices = [...device225Data, ...device226Data];
+    const xAxisLabels = [...new Set(activeDevices.map((d) => formatDate(d.TMS, timeRange)))];
+
     const series: ChartSeries[] = [
-      device225.length > 0 && {
-        name: "Device 25_225",
-        type: "line",  
-        data: device225.map((d) => d.tem1),
-        color: "#1890ff",
-        smooth: true,
-        symbol: 'circle',
-        symbolSize: 6,
-        lineStyle: {
-          width: 2,
-          type: 'solid'
-        }
-      },
-      device226.length > 0 && {
-        name: "Device 25_226",
-        type: "line",
-        data: device226.map((d) => d.tem1),
-        color: "#ff4500",
-        smooth: true,
-        symbol: 'circle',
-        symbolSize: 6,
-        lineStyle: {
-          width: 2,
-          type: 'solid'
-        }
-      }
-    ].filter((series): series is ChartSeries => Boolean(series));
+      processDeviceData(device225Data, {
+        name: TEMPERATURE_CHART_CONSTANTS.DEVICE_NAMES.DEVICE_225,
+        color: TEMPERATURE_CHART_CONSTANTS.COLORS.DEVICE_225
+      }),
+      processDeviceData(device226Data, {
+        name: TEMPERATURE_CHART_CONSTANTS.DEVICE_NAMES.DEVICE_226,
+        color: TEMPERATURE_CHART_CONSTANTS.COLORS.DEVICE_226
+      })
+    ].filter((s): s is ChartSeries => s !== null);
+
+    const { min: yAxisMin, max: yAxisMax } = calculateAxisBounds(
+      activeDevices.map(d => d.tem1)
+    );
 
     return {
       series,

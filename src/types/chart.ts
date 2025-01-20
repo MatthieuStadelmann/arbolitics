@@ -10,6 +10,8 @@ export interface TooltipParams {
   dataIndex: number;
   seriesName: string;
   value: number;
+  color: string;
+  axisValue: string;
 }
 
 export interface ChartSeries {

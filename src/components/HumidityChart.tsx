@@ -83,7 +83,7 @@ export function HumidityChart({ data, selectedDevices, timeRange }: HumidityChar
     <div>
       <ReactECharts
         option={options}
-        style={{ height: "600px" }}
+        style={{ height: "400px" }}
         key={JSON.stringify(series)}
       />
     </div>

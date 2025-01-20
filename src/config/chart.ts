@@ -1,5 +1,6 @@
-import { TIME_RANGES } from "@/constants/arbo";
 import { ChartSeries, TooltipParams } from "@/types/chart";
+import { getXAxisLabels } from "@/utils/chart";
+import { TEMPERATURE_CHART_CONSTANTS } from "@/constants/chart";
 
 export const createChartOptions = (
   xAxisLabels: string[],
@@ -9,84 +10,90 @@ export const createChartOptions = (
   timeRange: string
 ) => ({
   title: {
-    text: `Temperature Trends`,
-    left: "center",
+    text: TEMPERATURE_CHART_CONSTANTS.LAYOUT.TITLE.TEXT,
+    left: TEMPERATURE_CHART_CONSTANTS.LAYOUT.TITLE.POSITION,
+    bottom: TEMPERATURE_CHART_CONSTANTS.LAYOUT.TITLE.TOP,
     textStyle: {
-      fontWeight: "normal",
-      fontSize: 16,
+      fontWeight: TEMPERATURE_CHART_CONSTANTS.LAYOUT.TITLE.FONT_WEIGHT,
+      fontSize: TEMPERATURE_CHART_CONSTANTS.LAYOUT.TITLE.FONT_SIZE,
     },
   },
   legend: {
     show: true,
-    top: "5%",
-    right: "10%",
-    textStyle: { fontSize: 12 },
-    itemWidth: 15,
-    itemHeight: 3,
+    top: TEMPERATURE_CHART_CONSTANTS.LAYOUT.LEGEND.TOP,
+    right: TEMPERATURE_CHART_CONSTANTS.LAYOUT.LEGEND.RIGHT,
+    textStyle: {
+      fontSize: TEMPERATURE_CHART_CONSTANTS.LAYOUT.LEGEND.FONT_SIZE,
+    },
+    itemWidth: TEMPERATURE_CHART_CONSTANTS.LAYOUT.LEGEND.ITEM_WIDTH,
+    itemHeight: TEMPERATURE_CHART_CONSTANTS.LAYOUT.LEGEND.ITEM_HEIGHT,
   },
   tooltip: {
-    trigger: "axis",
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
-    borderWidth: 0,
-    shadowColor: "rgba(0, 0, 0, 0.1)",
-    shadowBlur: 10,
+    trigger: TEMPERATURE_CHART_CONSTANTS.TOOLTIP.TRIGGER,
+    backgroundColor: TEMPERATURE_CHART_CONSTANTS.COLORS.TOOLTIP_BG,
+    borderWidth: TEMPERATURE_CHART_CONSTANTS.TOOLTIP.BORDER_WIDTH,
+    shadowColor: TEMPERATURE_CHART_CONSTANTS.COLORS.TOOLTIP_SHADOW,
+    shadowBlur: TEMPERATURE_CHART_CONSTANTS.TOOLTIP.SHADOW_BLUR,
     textStyle: {
-      color: "#333",
+      color: TEMPERATURE_CHART_CONSTANTS.COLORS.TOOLTIP_TEXT,
     },
     formatter: (params: TooltipParams[]) => {
-      const timeIndex = params[0]?.dataIndex ?? 0;
-      const timeLabel = xAxisLabels[timeIndex] ?? "Unknown Time";
-
-      return (
-        `<b>Time: ${timeLabel}</b><br/>` +
-        params
-          .map((param) => `${param.seriesName}: ${param.value.toFixed(1)}°`)
-          .join("<br/>")
-      );
+      let tooltipText = `${params[0].axisValue}<br/>`;
+      params.forEach((param) => {
+        tooltipText += `
+          <span style="display:inline-block;width:${
+            TEMPERATURE_CHART_CONSTANTS.TOOLTIP.DOT_SIZE
+          }px;height:${
+          TEMPERATURE_CHART_CONSTANTS.TOOLTIP.DOT_SIZE
+        }px;border-radius:50%;background-color:${param.color};margin-right:${
+          TEMPERATURE_CHART_CONSTANTS.TOOLTIP.DOT_MARGIN_RIGHT
+        }px;"></span>
+          ${param.seriesName}: <strong>${Number(param.value).toFixed(
+          1
+        )}°C</strong><br/>`;
+      });
+      return tooltipText;
     },
   },
   xAxis: {
-    type: "category",
-    data: timeRange === TIME_RANGES.WEEKLY ? xAxisLabels.slice(-7) : timeRange === TIME_RANGES.MONTHLY ? xAxisLabels.slice(-4) : xAxisLabels,
-    boundaryGap: false,  
-
+    type: TEMPERATURE_CHART_CONSTANTS.XAXIS.TYPE,
+    data: getXAxisLabels(timeRange, xAxisLabels),
+    boundaryGap: false,
     axisLabel: {
       rotate: window.innerWidth < 600 ? 45 : xAxisLabels.length > 12 ? 45 : 0,
-      interval: 'auto',
-      color: "#666",
-      alignWithLabel: true,
+      interval: TEMPERATURE_CHART_CONSTANTS.XAXIS.XAXIS_LABEL.INTERVAL,
+      color: TEMPERATURE_CHART_CONSTANTS.COLORS.TEXT,
+      alignWithLabel:
+        TEMPERATURE_CHART_CONSTANTS.XAXIS.XAXIS_LABEL.ALIGN_WITH_LABEL,
     },
     axisTick: {
-      alignWithLabel: true,
-      interval: "auto",
+      alignWithLabel:
+        TEMPERATURE_CHART_CONSTANTS.XAXIS.XAXIS_TICK.ALIGN_WITH_LABEL,
+      interval: TEMPERATURE_CHART_CONSTANTS.XAXIS.XAXIS_TICK.INTERVAL,
     },
     axisLine: {
-      lineStyle: { color: "#ddd" },
+      lineStyle: { color: TEMPERATURE_CHART_CONSTANTS.COLORS.AXIS },
     },
   },
   yAxis: {
-    type: "value",
+    type: TEMPERATURE_CHART_CONSTANTS.YAXIS.TYPE,
     min: yAxisMin,
     max: yAxisMax,
-    splitNumber: 8,
+    splitNumber: TEMPERATURE_CHART_CONSTANTS.YAXIS.SPLIT_NUMBER,
     axisLabel: {
       formatter: (value: number) => `${value.toFixed(1)}°`,
-      color: "#666",
+      color: TEMPERATURE_CHART_CONSTANTS.COLORS.TEXT,
     },
     splitLine: {
-      show: true,
+      show: TEMPERATURE_CHART_CONSTANTS.YAXIS.YAXIS_SPLIT_LINE.SHOW,
       lineStyle: {
-        color: "#eee",
-        type: "dashed",
+        color:
+          TEMPERATURE_CHART_CONSTANTS.YAXIS.YAXIS_SPLIT_LINE.LINE_STYLE.COLOR,
+        type: TEMPERATURE_CHART_CONSTANTS.YAXIS.YAXIS_SPLIT_LINE.LINE_STYLE
+          .TYPE,
       },
     },
   },
   series,
-  grid: {
-    left: "10%",
-    right: "5%",
-    bottom: "15%",
-    top: "15%",
-    height: "75%",
-  },
+  grid: TEMPERATURE_CHART_CONSTANTS.LAYOUT.GRID,
 });
