@@ -17,13 +17,13 @@ export const TEMPERATURE_CHART_CONSTANTS = {
   LAYOUT: {
     TITLE: {
       POSITION: "center",
-      FONT_SIZE: 20,
-      FONT_WEIGHT: "bold",
+      FONT_SIZE: 16,
+      FONT_WEIGHT: "normal",
       TEXT: "Temperature Trends",
-      TOP: "5%%",
+      TOP: 0,
     },
     LEGEND: {
-      TOP: "5%",
+      TOP: "8%",
       RIGHT: "10%",
       FONT_SIZE: 12,
       ITEM_WIDTH: 15,
