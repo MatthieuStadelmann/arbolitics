@@ -1,26 +1,21 @@
 import ReactECharts from "echarts-for-react";
-import { TemperatureChartProps } from "@/types/chart";
-import { createChartOptions } from "@/config/chart";
 import { useTemperatureChart } from "@/hooks/useTemperatureChart";
+import { TemperatureChartProps } from "@/types/temperatureChart";
+import { createTemperatureChartOptions } from "@/config/temperatueChartConfig";
 
-export function TemperatureChart({
-  data,
-  timeRange,
-}: TemperatureChartProps) {
+export function TemperatureChart({ data, timeRange }: TemperatureChartProps) {
   const { series, xAxisLabels, yAxisMin, yAxisMax } = useTemperatureChart({
     data,
     timeRange,
   });
 
-
-  const options = createChartOptions(
+  const options = createTemperatureChartOptions(
     xAxisLabels,
     yAxisMin,
     yAxisMax,
     series,
     timeRange
   );
-
 
   return (
     <div>
@@ -32,4 +27,3 @@ export function TemperatureChart({
     </div>
   );
 }
-

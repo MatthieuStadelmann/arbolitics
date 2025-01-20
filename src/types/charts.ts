@@ -1,11 +1,3 @@
-import { ArboDataPoint } from "./arbo";
-import { TimeRange } from "@/constants/arbo";
-
-export interface TemperatureChartProps {
-  data: ArboDataPoint[];
-  timeRange: TimeRange;
-}
-
 export interface TooltipParams {
   dataIndex: number;
   seriesName: string;
@@ -28,10 +20,7 @@ export interface ChartSeries {
   };
 }
 
-export interface UseTemperatureChartProps {
-  data: ArboDataPoint[];
-  timeRange: TimeRange;
-}
+
 
 export interface ChartData {
   series: ChartSeries[];

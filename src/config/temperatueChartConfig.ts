@@ -1,13 +1,13 @@
-import { ChartSeries, TooltipParams } from "@/types/chart";
-import { getXAxisLabels } from "@/utils/chart";
-import { TEMPERATURE_CHART_CONSTANTS } from "@/constants/chart";
-
-export const createChartOptions = (
+import { ChartSeries, TooltipParams } from "@/types/charts";
+import { TEMPERATURE_CHART_CONSTANTS } from "@/constants/temperateChartConsts";
+import { getXAxisLabels } from "@/utils/temperatureChart";
+import { TimeRange } from "@/types/arbo";
+export const createTemperatureChartOptions = (
   xAxisLabels: string[],
   yAxisMin: number,
   yAxisMax: number,
   series: ChartSeries[],
-  timeRange: string
+  timeRange: TimeRange
 ) => ({
   title: {
     text: TEMPERATURE_CHART_CONSTANTS.LAYOUT.TITLE.TEXT,

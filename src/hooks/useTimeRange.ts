@@ -1,9 +1,9 @@
-import { 
-  DATAPOINTS_PER_DAY, 
-  DAYS_PER_WEEK, 
-  WEEKS_PER_MONTH, 
-  TIME_RANGES 
-} from '@/constants/arbo';
+import {
+  DATAPOINTS_PER_DAY,
+  DAYS_PER_WEEK,
+  WEEKS_PER_MONTH,
+  TIME_RANGES,
+} from "@/constants/arbo";
 
 export const useTimeRange = (timeRange: string) => {
   const getDataPointLimit = (range: string): number => {
@@ -20,6 +20,6 @@ export const useTimeRange = (timeRange: string) => {
   };
 
   return {
-    limit: getDataPointLimit(timeRange)
+    limit: getDataPointLimit(timeRange),
   };
-}; 
+};
