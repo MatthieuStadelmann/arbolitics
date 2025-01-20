@@ -3,11 +3,11 @@ import { Device } from "@/types/dashboard";
 import { useArboData } from "@/hooks/useArboData";
 import { useTimeRange } from "@/hooks/useTimeRange";
 import { DEVICE_IDS, TIME_RANGE_KEYS, TIME_RANGES } from "@/constants/arbo";
-import { ArboDataPoint, TimeRangeOption } from "@/types/arbo";
+import { ArboDataPoint, TimeRangeOption, TimeRange } from "@/types/arbo";
 
 export function useDashboard() {
-  const [selectedTimeRange, setSelectedTimeRange] = useState<string>(
-    TIME_RANGES.DAILY
+  const [selectedTimeRange, setSelectedTimeRange] = useState<TimeRange>(
+    TIME_RANGE_KEYS.DAILY
   );
   const [selectedDevices, setSelectedDevices] = useState<string[]>([]);
   const { limit } = useTimeRange(selectedTimeRange);

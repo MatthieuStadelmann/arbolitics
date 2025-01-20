@@ -31,7 +31,6 @@ export function useTemperatureChart({
         .sort((a: ArboDataPoint, b: ArboDataPoint) => a.TMS - b.TMS),
       timeRange
     );
-
     const device226Data = aggregateData(
       data
         .filter((d: ArboDataPoint) => d.DID === DEVICE_IDS.DEVICE_2)
@@ -60,7 +59,6 @@ export function useTemperatureChart({
     const { min: yAxisMin, max: yAxisMax } = calculateAxisBounds(
       activeDevices.map((d: ArboDataPoint) => d.tem1)
     );
-
     return {
       series,
       xAxisLabels,

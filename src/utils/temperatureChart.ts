@@ -1,49 +1,46 @@
 import { ArboDataPoint, TimeRange } from "@/types/arbo";
-import { TIME_RANGES } from "@/constants/arbo";
 import { ChartSeries } from "@/types/charts";
 import { TEMPERATURE_CHART_CONSTANTS } from "@/constants/temperateChartConsts";
-
 /**
  * Formats timestamp based on selected time range
  * @param timestamp - Unix timestamp in seconds
  * @param timeRange - Selected time range (daily/weekly/monthly)
  * @returns Formatted date string according to time range
  */
-export const formatDate = (timestamp: number, timeRange: string): string => {
+export const formatDate = (timestamp: number, timeRange: TimeRange): string => {
   const date = new Date(timestamp * 1000);
+  switch (timeRange) {
+    case "DAILY":
+      return date.toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "Europe/Berlin",
+      });
 
-  if (timeRange === TIME_RANGES.DAILY) {
-    return date.toLocaleTimeString("en-GB", {
-      hour: "2-digit",
-      minute: "2-digit",
-      timeZone: "Europe/Berlin",
-    });
+    case "WEEKLY":
+      return date.toLocaleDateString("en-GB", {
+        weekday: "short",
+        day: "2-digit",
+        month: "short",
+        timeZone: "Europe/Berlin",
+      });
+
+    case "MONTHLY":
+      const firstDayOfWeek = new Date(date);
+      firstDayOfWeek.setDate(date.getDate() - date.getDay());
+      return `Week of ${firstDayOfWeek.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        timeZone: "Europe/Berlin",
+      })}`;
+
+    default:
+      return date.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        timeZone: "Europe/Berlin",
+      });
   }
-
-  if (timeRange === TIME_RANGES.WEEKLY) {
-    return date.toLocaleDateString("en-GB", {
-      weekday: "short",
-      day: "2-digit",
-      month: "short",
-      timeZone: "Europe/Berlin",
-    });
-  }
-
-  if (timeRange === TIME_RANGES.MONTHLY) {
-    const firstDayOfWeek = new Date(date);
-    firstDayOfWeek.setDate(date.getDate() - date.getDay());
-
-    return `Week of ${firstDayOfWeek.toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      timeZone: "Europe/Berlin",
-    })}`;
-  }
-  return date.toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    timeZone: "Europe/Berlin",
-  });
 };
 
 /**
@@ -54,11 +51,11 @@ export const formatDate = (timestamp: number, timeRange: string): string => {
  */
 export const getXAxisLabels = (timeRange: TimeRange, xAxisLabels: string[]) => {
   switch (timeRange) {
-    case 'WEEKLY':
+    case "WEEKLY":
       return xAxisLabels.slice(-7);
-    case 'MONTHLY':
+    case "MONTHLY":
       return xAxisLabels.slice(-4);
-    case 'DAILY':
+    case "DAILY":
       return xAxisLabels.filter((_, index) => index % 2 === 0);
     default:
       return xAxisLabels;

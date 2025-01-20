@@ -1,5 +1,4 @@
-import { ArboDataPoint } from "@/types/arbo";
-import { TIME_RANGES } from "@/constants/arbo";
+import { ArboDataPoint, TimeRange } from "@/types/arbo";
 
 /**
  * Converts raw sensor value to human-readable format with one decimal place
@@ -32,7 +31,7 @@ const getMonday = (date: Date): Date => {
  */
 const calculateAverages = (
   grouped: Record<string, ArboDataPoint[]>,
-  valueKey: keyof Pick<ArboDataPoint, 'tem1' | 'hum1'>
+  valueKey: keyof Pick<ArboDataPoint, "tem1" | "hum1">
 ): ArboDataPoint[] => {
   return Object.entries(grouped).map(([date, points]) => {
     const avgValue =
@@ -57,19 +56,19 @@ const calculateAverages = (
  */
 export const aggregateData = (
   dataset: ArboDataPoint[],
-  timeRange: string,
-  valueKey: keyof Pick<ArboDataPoint, 'tem1' | 'hum1'> = 'tem1'
+  timeRange: TimeRange,
+  valueKey: keyof Pick<ArboDataPoint, "tem1" | "hum1"> = "tem1"
 ): ArboDataPoint[] => {
   if (!dataset.length) return [];
 
   switch (timeRange) {
-    case TIME_RANGES.DAILY:
+    case "DAILY":
       return dataset.map((d: ArboDataPoint) => ({
         ...d,
         [valueKey]: decodeValue(d[valueKey]),
       }));
 
-    case TIME_RANGES.WEEKLY: {
+    case "WEEKLY": {
       const grouped: Record<string, ArboDataPoint[]> = {};
       dataset.forEach((d: ArboDataPoint) => {
         const date = new Date(d.TMS * 1000);
@@ -81,7 +80,7 @@ export const aggregateData = (
       return calculateAverages(grouped, valueKey);
     }
 
-    case TIME_RANGES.MONTHLY: {
+    case "MONTHLY": {
       const grouped: Record<string, ArboDataPoint[]> = {};
       dataset.forEach((d: ArboDataPoint) => {
         const date = new Date(d.TMS * 1000);
@@ -96,4 +95,4 @@ export const aggregateData = (
     default:
       return dataset;
   }
-}; 
+};

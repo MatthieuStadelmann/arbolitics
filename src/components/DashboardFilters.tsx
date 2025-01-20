@@ -1,12 +1,13 @@
-import { Select } from '@/components/ui/Select';
-import { TimeRange, Device } from '@/types/dashboard';
+import { Select } from "@/components/ui/Select";
+import { TimeRange, TimeRangeOption } from "@/types/arbo";
+import { Device } from "@/types/dashboard";
 
 interface DashboardFiltersProps {
-  timeRanges: TimeRange[];
+  timeRanges: TimeRangeOption[];
   devices: Device[];
-  selectedTimeRange: string;
+  selectedTimeRange: TimeRange;
   selectedDevices: string[];
-  onTimeRangeChange: (value: string) => void;
+  onTimeRangeChange: (value: TimeRange) => void;
   onDeviceChange: (value: string) => void;
 }
 
@@ -20,20 +21,21 @@ export function DashboardFilters({
 }: DashboardFiltersProps) {
   return (
     <div className="mb-8 flex gap-4">
-      <Select
+      <Select<TimeRange>
         value={selectedTimeRange}
         onChange={onTimeRangeChange}
-        options={timeRanges.map(range => ({
+        className="capitalize"
+        options={timeRanges.map((range: TimeRangeOption) => ({
           value: range.id,
-          label: range.label
+          label: range.label,
         }))}
       />
       <Select
-        value={selectedDevices[0] || ''}
+        value={selectedDevices[0] || ""}
         onChange={onDeviceChange}
-        options={devices.map(device => ({
+        options={devices.map((device: Device) => ({
           value: device.id,
-          label: device.name
+          label: device.name,
         }))}
         placeholder="All Devices"
       />

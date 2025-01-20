@@ -1,12 +1,6 @@
 import ReactECharts from 'echarts-for-react';
-import { ArboDataPoint } from '@/types/arbo';
 import { useHumidityChart } from '@/hooks/useHumidityChart';
-
-interface HumidityChartProps {
-  data: ArboDataPoint[];
-  selectedDevices: string[];
-  timeRange: string;
-}
+import { HumidityChartProps } from '@/types/humidityChart';
 
 export function HumidityChart({ data, selectedDevices, timeRange }: HumidityChartProps) {
   const { series, xAxisLabels, yAxisMin, yAxisMax } = useHumidityChart({ 

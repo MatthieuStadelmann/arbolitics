@@ -1,25 +1,20 @@
-import {
-  DATAPOINTS_PER_DAY,
-  DAYS_PER_WEEK,
-  WEEKS_PER_MONTH,
-  TIME_RANGES,
-} from "@/constants/arbo";
+import { TimeRange } from "@/types/arbo";
+import { useMemo } from "react";
 
-export const useTimeRange = (timeRange: string) => {
-  const getDataPointLimit = (range: string): number => {
-    switch (range) {
-      case TIME_RANGES.DAILY:
-        return DATAPOINTS_PER_DAY;
-      case TIME_RANGES.WEEKLY:
-        return DATAPOINTS_PER_DAY * DAYS_PER_WEEK;
-      case TIME_RANGES.MONTHLY:
-        return DATAPOINTS_PER_DAY * DAYS_PER_WEEK * WEEKS_PER_MONTH;
+export function useTimeRange(timeRange: TimeRange) {
+  const limit = useMemo(() => {
+    switch (timeRange) {
+      case "DAILY":
+        return 24;
+      case "WEEKLY":
+        return 24 * 7;
+      case "MONTHLY":
+        return 24 * 30;
       default:
-        return DATAPOINTS_PER_DAY;
+        return 24;
     }
-  };
+  }, [timeRange]);
 
-  return {
-    limit: getDataPointLimit(timeRange),
-  };
-};
+  return { limit };
+}
+//

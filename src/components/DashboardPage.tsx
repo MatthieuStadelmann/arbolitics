@@ -3,8 +3,7 @@ import { useDashboard } from "@/hooks/useDashboard";
 import { DashboardFilters } from "@/components/DashboardFilters";
 import { HumidityChart } from "./HumidityChart";
 import { TemperatureChart } from "./TemperatureChart";
-import { TimeRange } from "@/constants/arbo";
-
+import { TimeRange } from "@/types/arbo";
 export function DashboardPage() {
   const {
     selectedTimeRange,
@@ -13,7 +12,7 @@ export function DashboardPage() {
     setSelectedDevices,
     timeRanges,
     devices,
-    data, 
+    data,
     isLoading,
     error,
   } = useDashboard();
@@ -43,11 +42,14 @@ export function DashboardPage() {
     return (
       <div className="grid gap-6 md:grid-cols-2">
         <div className="rounded-lg bg-white p-6 shadow-lg">
-          <TemperatureChart data={data || []} timeRange={selectedTimeRange as TimeRange} />
+          <TemperatureChart
+            data={data || []}
+            timeRange={selectedTimeRange as TimeRange}
+          />
         </div>
         <div className="rounded-lg bg-white p-6 shadow-lg">
-          <HumidityChart 
-            data={data || []} 
+          <HumidityChart
+            data={data || []}
             selectedDevices={selectedDevices}
             timeRange={selectedTimeRange}
           />

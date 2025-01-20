@@ -1,5 +1,4 @@
-import { ArboDataPoint } from "./arbo";
-import { TimeRange } from "@/constants/arbo";
+import { ArboDataPoint, TimeRange } from "./arbo";
 
 export interface TemperatureChartProps {
   data: ArboDataPoint[];
@@ -7,6 +6,6 @@ export interface TemperatureChartProps {
 }
 
 export interface UseTemperatureChartProps {
-    data: ArboDataPoint[];
-    timeRange: TimeRange;
-  }
+  data: ArboDataPoint[];
+  timeRange: TimeRange;
+}
