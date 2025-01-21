@@ -4,6 +4,7 @@ import { DashboardFilters } from "@/components/DashboardFilters";
 import { HumidityChart } from "./HumidityChart";
 import { TemperatureChart } from "./TemperatureChart";
 import { TimeRange } from "@/types/arbo";
+import WeatherTable from "./WeatherTable";
 export function DashboardPage() {
   const {
     selectedTimeRange,
@@ -53,6 +54,10 @@ export function DashboardPage() {
             selectedDevices={selectedDevices}
             timeRange={selectedTimeRange}
           />
+        </div>
+        <div className="col-span-2">
+          <h1 className="mb-4 text-2xl">Weather Insights</h1>
+          <WeatherTable weatherData={data} />
         </div>
       </div>
     );
