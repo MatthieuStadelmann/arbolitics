@@ -3,7 +3,7 @@ import { DEVICE_IDS } from "@/constants/arbo";
 import {
   calculateAxisBounds,
   formatDate,
-  processDeviceData,
+  processTemperatureData,
 } from "@/utils/temperatureChart";
 import { TEMPERATURE_CHART_CONSTANTS } from "@/constants/temperateChartConsts";
 import { ArboDataPoint } from "@/types/arbo";
@@ -27,34 +27,44 @@ export function useTemperatureChart({
 
     const device225Data = aggregateData(
       data
-        .filter((d: ArboDataPoint) => d.DID === DEVICE_IDS.DEVICE_1)
+        .filter(
+          (dataPoint: ArboDataPoint) => dataPoint.DID === DEVICE_IDS.DEVICE_1
+        )
         .sort((a: ArboDataPoint, b: ArboDataPoint) => a.TMS - b.TMS),
       timeRange
     );
+
     const device226Data = aggregateData(
       data
-        .filter((d: ArboDataPoint) => d.DID === DEVICE_IDS.DEVICE_2)
+        .filter(
+          (dataPoint: ArboDataPoint) => dataPoint.DID === DEVICE_IDS.DEVICE_2
+        )
         .sort((a: ArboDataPoint, b: ArboDataPoint) => a.TMS - b.TMS),
       timeRange
     );
 
     const activeDevices = [...device225Data, ...device226Data];
+
     const xAxisLabels = [
       ...new Set(
-        activeDevices.map((d: ArboDataPoint) => formatDate(d.TMS, timeRange))
+        activeDevices.map((dataPoint: ArboDataPoint) =>
+          formatDate(dataPoint.TMS, timeRange)
+        )
       ),
     ];
 
     const series: ChartSeries[] = [
-      processDeviceData(device225Data, {
+      processTemperatureData(device225Data, {
         name: TEMPERATURE_CHART_CONSTANTS.DEVICE_NAMES.DEVICE_225,
         color: TEMPERATURE_CHART_CONSTANTS.COLORS.DEVICE_225,
       }),
-      processDeviceData(device226Data, {
+      processTemperatureData(device226Data, {
         name: TEMPERATURE_CHART_CONSTANTS.DEVICE_NAMES.DEVICE_226,
         color: TEMPERATURE_CHART_CONSTANTS.COLORS.DEVICE_226,
       }),
-    ].filter((s: ChartSeries | null): s is ChartSeries => s !== null);
+    ].filter(
+      (series: ChartSeries | null): series is ChartSeries => series !== null
+    );
 
     const { min: yAxisMin, max: yAxisMax } = calculateAxisBounds(
       activeDevices.map((d: ArboDataPoint) => d.tem1)

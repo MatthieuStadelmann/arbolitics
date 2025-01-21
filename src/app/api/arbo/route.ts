@@ -5,14 +5,10 @@ import {
   ARBOLITICS_DATASET_ENDPOINT,
   DEVICE_IDS,
   LOCATION_ID,
+  TIME_LIMITS,
 } from "@/constants/arbo";
 import { AxiosError } from "axios";
 
-const TIME_LIMITS = {
-  daily: 24,
-  weekly: 168,
-  monthly: 672,
-} as const;
 
 export async function GET(request: Request) {
   try {
@@ -40,10 +36,10 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       device_25_225: allData.filter(
-        (d: ArboDataPoint) => d.DID === DEVICE_IDS.DEVICE_1
+        (dataPoint: ArboDataPoint) => dataPoint.DID === DEVICE_IDS.DEVICE_1
       ),
       device_25_226: allData.filter(
-        (d: ArboDataPoint) => d.DID === DEVICE_IDS.DEVICE_2
+        (dataPoint: ArboDataPoint) => dataPoint.DID === DEVICE_IDS.DEVICE_2
       ),
     });
   } catch (error: unknown) {

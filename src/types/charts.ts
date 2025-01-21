@@ -8,13 +8,13 @@ export interface TooltipParams {
 
 export interface ChartSeries {
   name: string;
-  type: "line";
+  type: "line" | "bar";
   data: number[];
   color: string;
-  smooth: boolean;
-  symbol: string;
-  symbolSize: number;
-  lineStyle: {
+  smooth?: boolean;
+  symbol?: string;
+  symbolSize?: number;
+  lineStyle?: {
     width: number;
     type: string;
   };

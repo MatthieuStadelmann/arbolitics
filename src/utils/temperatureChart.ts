@@ -1,6 +1,7 @@
 import { ArboDataPoint, TimeRange } from "@/types/arbo";
 import { ChartSeries } from "@/types/charts";
 import { TEMPERATURE_CHART_CONSTANTS } from "@/constants/temperateChartConsts";
+import { TIME_RANGE_KEYS } from "@/constants/arbo";
 /**
  * Formats timestamp based on selected time range
  * @param timestamp - Unix timestamp in seconds
@@ -10,14 +11,14 @@ import { TEMPERATURE_CHART_CONSTANTS } from "@/constants/temperateChartConsts";
 export const formatDate = (timestamp: number, timeRange: TimeRange): string => {
   const date = new Date(timestamp * 1000);
   switch (timeRange) {
-    case "DAILY":
+    case TIME_RANGE_KEYS.DAILY:
       return date.toLocaleTimeString("en-GB", {
         hour: "2-digit",
         minute: "2-digit",
         timeZone: "Europe/Berlin",
       });
 
-    case "WEEKLY":
+    case TIME_RANGE_KEYS.WEEKLY:
       return date.toLocaleDateString("en-GB", {
         weekday: "short",
         day: "2-digit",
@@ -25,7 +26,7 @@ export const formatDate = (timestamp: number, timeRange: TimeRange): string => {
         timeZone: "Europe/Berlin",
       });
 
-    case "MONTHLY":
+    case TIME_RANGE_KEYS.MONTHLY:
       const firstDayOfWeek = new Date(date);
       firstDayOfWeek.setDate(date.getDate() - date.getDay());
       return `Week of ${firstDayOfWeek.toLocaleDateString("en-GB", {
@@ -51,11 +52,11 @@ export const formatDate = (timestamp: number, timeRange: TimeRange): string => {
  */
 export const getXAxisLabels = (timeRange: TimeRange, xAxisLabels: string[]) => {
   switch (timeRange) {
-    case "WEEKLY":
+    case TIME_RANGE_KEYS.WEEKLY:
       return xAxisLabels.slice(-7);
-    case "MONTHLY":
+    case TIME_RANGE_KEYS.MONTHLY:
       return xAxisLabels.slice(-4);
-    case "DAILY":
+    case TIME_RANGE_KEYS.DAILY:
       return xAxisLabels.filter((_, index) => index % 2 === 0);
     default:
       return xAxisLabels;
@@ -68,7 +69,7 @@ export const getXAxisLabels = (timeRange: TimeRange, xAxisLabels: string[]) => {
  * @param deviceConfig - Device name and color configuration
  * @returns Chart series configuration or null if no data
  */
-export const processDeviceData = (
+export const processTemperatureData = (
   deviceData: ArboDataPoint[],
   deviceConfig: {
     name: string;
@@ -80,7 +81,7 @@ export const processDeviceData = (
   return {
     name: deviceConfig.name,
     type: TEMPERATURE_CHART_CONSTANTS.CHART_TYPE,
-    data: deviceData.map((d) => d.tem1),
+    data: deviceData.map((dataPoint: ArboDataPoint) => dataPoint.tem1),
     color: deviceConfig.color,
     smooth: TEMPERATURE_CHART_CONSTANTS.LINE_STYLE.SMOOTH,
     symbol: TEMPERATURE_CHART_CONSTANTS.LINE_STYLE.SYMBOL,

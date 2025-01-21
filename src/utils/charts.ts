@@ -5,7 +5,10 @@ import { ArboDataPoint, TimeRange } from "@/types/arbo";
  * @param value - Raw sensor value
  * @returns Decoded value with one decimal place
  */
-export const decodeValue = (value: number): number => {
+export const decodeValue = (value: number, min?: number): number => {
+  if (min) {
+    if (value < min) return 0;
+  }
   return Number((value / 10).toFixed(1));
 };
 
@@ -35,8 +38,11 @@ const calculateAverages = (
 ): ArboDataPoint[] => {
   return Object.entries(grouped).map(([date, points]) => {
     const avgValue =
-      points.reduce((sum, p) => sum + decodeValue(p[valueKey]), 0) /
-      points.length;
+      points.reduce(
+        (sum, p) =>
+          sum + decodeValue(p[valueKey], valueKey === "hum1" ? 0 : undefined),
+        0
+      ) / points.length;
     const lastPoint = points[points.length - 1];
 
     return {

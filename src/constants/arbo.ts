@@ -4,15 +4,15 @@ export const DEVICE_IDS = {
 } as const;
 
 export const TIME_RANGE_KEYS = {
-  DAILY: 'DAILY',
-  WEEKLY: 'WEEKLY',
-  MONTHLY: 'MONTHLY'
+  DAILY: "DAILY",
+  WEEKLY: "WEEKLY",
+  MONTHLY: "MONTHLY",
 } as const;
 
 export const TIME_RANGES = {
-  [TIME_RANGE_KEYS.DAILY]: 'daily',
-  [TIME_RANGE_KEYS.WEEKLY]: 'weekly',
-  [TIME_RANGE_KEYS.MONTHLY]: 'monthly'
+  [TIME_RANGE_KEYS.DAILY]: "daily",
+  [TIME_RANGE_KEYS.WEEKLY]: "weekly",
+  [TIME_RANGE_KEYS.MONTHLY]: "monthly",
 } as const;
 
 export const DATAPOINTS_PER_DAY = 24;
@@ -23,3 +23,9 @@ export const ARBOLITICS_LOGIN_ENDPOINT = "/auth/login" as const;
 export const LOCATION_ID = 10 as const;
 export const ARBOLITICS_DATASET_ENDPOINT =
   "/data/getArboliticsDataset" as const;
+
+export const TIME_LIMITS = {
+  daily: 100,
+  weekly: 100,
+  monthly: 100,
+};

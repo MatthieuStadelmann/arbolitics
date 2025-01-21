@@ -10,15 +10,3 @@ export interface UseHumidityChartProps {
   selectedDevices: string[];
   timeRange: TimeRange;
 }
-
-export interface HumidityChartData {
-  series: {
-    name: string;
-    type: "bar";
-    data: number[];
-    color: string;
-  }[];
-  xAxisLabels: string[];
-  yAxisMin: number;
-  yAxisMax: number;
-}

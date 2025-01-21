@@ -1,98 +1,67 @@
 import { useMemo } from "react";
 import { DEVICE_IDS } from "@/constants/arbo";
-import {
-  HumidityChartData,
-  UseHumidityChartProps,
-} from "@/types/humidityChart";
+import { UseHumidityChartProps } from "@/types/humidityChart";
 import { aggregateData } from "@/utils/charts";
+import { ArboDataPoint } from "@/types/arbo";
+import { formatDate } from "@/utils/temperatureChart";
+import { TEMPERATURE_CHART_CONSTANTS } from "@/constants/temperateChartConsts";
+import { ChartData, ChartSeries } from "@/types/charts";
+import { processHumidityData } from "@/utils/humidityChart";
 
 export function useHumidityChart({
   data,
-  selectedDevices,
   timeRange,
-}: UseHumidityChartProps): HumidityChartData {
+}: UseHumidityChartProps): ChartData {
   return useMemo(() => {
-    const validSelectedDevices = selectedDevices.filter((d) => d !== "");
+    if (!data?.length) {
+      return {
+        series: [],
+        xAxisLabels: [],
+        yAxisMin: 0,
+        yAxisMax: 1,
+      };
+    }
 
-    const timestamps = [...new Set(data.map((d) => d.TMS * 1000))].sort(
-      (a, b) => a - b
+    const device225Data = aggregateData(
+      data
+        .filter(
+          (dataPoint: ArboDataPoint) => dataPoint.DID === DEVICE_IDS.DEVICE_1
+        )
+        .sort((a: ArboDataPoint, b: ArboDataPoint) => a.TMS - b.TMS),
+      timeRange,
+      "hum1"
     );
+    const device226Data = aggregateData(
+      data
+        .filter(
+          (dataPoint: ArboDataPoint) => dataPoint.DID === DEVICE_IDS.DEVICE_2
+        )
+        .sort((a: ArboDataPoint, b: ArboDataPoint) => a.TMS - b.TMS),
+      timeRange,
+      "hum1"
+    );
+    const activeDevices = [...device225Data, ...device226Data];
 
-    const formatDate = (ts: number, format: Intl.DateTimeFormatOptions) =>
-      new Intl.DateTimeFormat("en-US", format).format(new Date(ts));
+    const xAxisLabels = [
+      ...new Set(
+        activeDevices.map((dataPoint: ArboDataPoint) =>
+          formatDate(dataPoint.TMS, timeRange)
+        )
+      ),
+    ];
 
-    const getAggregatedLabels = () => {
-      switch (timeRange) {
-        case "DAILY":
-          return timestamps.map((ts) =>
-            formatDate(ts, { hour: "2-digit", minute: "2-digit" })
-          );
-        case "WEEKLY":
-          return [
-            ...new Set(
-              timestamps.map((ts) =>
-                formatDate(ts, { month: "short", day: "numeric" })
-              )
-            ),
-          ];
-        case "MONTHLY":
-          return [
-            ...new Set(
-              timestamps.map((ts) => {
-                const date = new Date(ts);
-                const weekStart = new Date(date);
-                weekStart.setDate(date.getDate() - date.getDay());
-                return `Week of ${formatDate(weekStart.getTime(), {
-                  month: "short",
-                  day: "numeric",
-                })}`;
-              })
-            ),
-          ];
-        default:
-          return [];
-      }
-    };
-
-    const xAxisLabels = getAggregatedLabels();
-    const series: HumidityChartData["series"] = [];
-
-    const processDeviceData = (
-      deviceId: string,
-      color: string,
-      deviceLabel: string
-    ) => {
-      const filteredData = data
-        .filter((d) => d.DID === deviceId)
-        .sort((a, b) => a.TMS - b.TMS);
-
-      const aggregatedData = aggregateData(filteredData, timeRange).map((d) =>
-        Number(((d.hum1 + 100) / 2).toFixed(1))
-      );
-
-      if (aggregatedData.length > 0) {
-        series.push({
-          name: deviceLabel,
-          type: "bar",
-          data: aggregatedData,
-          color,
-        });
-      }
-    };
-
-    if (
-      validSelectedDevices.length === 0 ||
-      validSelectedDevices.includes(DEVICE_IDS.DEVICE_1)
-    ) {
-      processDeviceData(DEVICE_IDS.DEVICE_1, "#1890ff", "Device 25_225");
-    }
-
-    if (
-      validSelectedDevices.length === 0 ||
-      validSelectedDevices.includes(DEVICE_IDS.DEVICE_2)
-    ) {
-      processDeviceData(DEVICE_IDS.DEVICE_2, "#ff4500", "Device 25_226");
-    }
+    const series: ChartSeries[] = [
+      processHumidityData(device225Data, {
+        name: TEMPERATURE_CHART_CONSTANTS.DEVICE_NAMES.DEVICE_225,
+        color: TEMPERATURE_CHART_CONSTANTS.COLORS.DEVICE_225,
+      }),
+      processHumidityData(device226Data, {
+        name: TEMPERATURE_CHART_CONSTANTS.DEVICE_NAMES.DEVICE_226,
+        color: TEMPERATURE_CHART_CONSTANTS.COLORS.DEVICE_226,
+      }),
+    ].filter(
+      (series: ChartSeries | null): series is ChartSeries => series !== null
+    );
 
     const allHumidity = series.flatMap((s) => s.data).filter(Boolean);
     const humidityMin = 0;
@@ -104,5 +73,5 @@ export function useHumidityChart({
       yAxisMin: humidityMin,
       yAxisMax: humidityMax,
     };
-  }, [data, selectedDevices, timeRange]);
+  }, [data, timeRange]);
 }
