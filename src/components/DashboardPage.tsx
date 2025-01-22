@@ -41,14 +41,14 @@ export function DashboardPage() {
       );
     }
     return (
-      <div className="grid gap-6 md:grid-cols-2">
-        <div className="rounded-lg bg-white p-6 shadow-lg">
+      <div className="grid grid-cols-2 gap-6">
+        <div className="col-span-2 rounded-lg bg-white p-6 shadow-lg lg:col-span-1">
           <TemperatureChart
             data={data || []}
             timeRange={selectedTimeRange as TimeRange}
           />
         </div>
-        <div className="rounded-lg bg-white p-6 shadow-lg">
+        <div className="col-span-2 rounded-lg bg-white p-6 shadow-lg lg:col-span-1">
           <HumidityChart
             data={data || []}
             selectedDevices={selectedDevices}
@@ -64,7 +64,7 @@ export function DashboardPage() {
   };
 
   return (
-    <div className="p-8">
+    <div className="p-4 lg:p-8">
       <h1 className="mb-8 text-4xl font-normal">Insights</h1>
 
       <DashboardFilters
