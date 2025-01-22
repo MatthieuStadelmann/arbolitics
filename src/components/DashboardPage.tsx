@@ -55,8 +55,8 @@ export function DashboardPage() {
             timeRange={selectedTimeRange}
           />
         </div>
-        <div className="col-span-2">
-          <h1 className="mb-4 text-2xl">Weather Insights</h1>
+        <div className="col-span-2 mt-10">
+          <h1 className="mb-4 text-2xl">Sensors Data Overview</h1>
           <WeatherTable weatherData={data} />
         </div>
       </div>
