@@ -33,6 +33,7 @@ yarn install
 Create a `.env.local` file in the root directory with the following content:
 ```env
 NEXT_PUBLIC_API_URL=https://staging-api.arbolitics.com
+NEXT_PUBLIC_REFRESH_INTERVAL=300
 ```
 
 4. Run the development server:
@@ -46,8 +47,14 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Environment Variables
 
-The following environment variables are required:
+The following environment variables need to be set in your `.env.local` file:
 
-| Variable | Description | Value                              |
-|----------|-------------|------------------------------------|
-| NEXT_PUBLIC_API_URL | Base URL for the Arbolitics API | https://staging-api.arbolitics.com |
+| Variable | Description | Required | Default |
+|----------|------------|----------|---------|
+| NEXT_PUBLIC_API_URL | Base URL for the Arbolitics API | Yes | - |
+
+Example `.env.local`:
+```env
+NEXT_PUBLIC_API_URL=https://staging-api.arbolitics.com
+```
+
