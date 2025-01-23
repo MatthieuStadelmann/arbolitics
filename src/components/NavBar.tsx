@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
 import { clearAuth } from "@/utils/auth";
 import Link from "next/link";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 export function NavBar() {
   const { isAuthenticated, setIsAuthenticated } = useAuth();
@@ -12,12 +12,12 @@ export function NavBar() {
   const handleLogout = () => {
     clearAuth();
     setIsAuthenticated(false);
-    router.push('/');
+    router.push("/");
   };
 
   return (
     <nav className="bg-[#2B4C15]">
-      <div className="mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="px-4 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex-shrink-0">
             <Link href="/">
@@ -31,7 +31,7 @@ export function NavBar() {
               />
             </Link>
           </div>
-          
+
           {isAuthenticated && (
             <div className="flex items-center gap-6">
               <button
@@ -46,4 +46,4 @@ export function NavBar() {
       </div>
     </nav>
   );
-} 
+}

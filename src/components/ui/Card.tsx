@@ -1,5 +1,5 @@
-import { cn } from '@/lib/utils';
 import { CardProps } from '@/types/ui';
+import { cn } from '@/utils/cn';
 
 export function Card({ children, className }: CardProps) {
   return (

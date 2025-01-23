@@ -1,41 +1,54 @@
-import { NextResponse } from 'next/server';
-import axios, { AxiosError } from 'axios';
-import { ArboDataResponse } from '@/types/arbo';
+import { NextResponse } from "next/server";
+import axios from "axios";
+import { ArboDataPoint } from "@/types/arbo";
+import {
+  ARBOLITICS_DATASET_ENDPOINT,
+  DEVICE_IDS,
+  LOCATION_ID,
+  TIME_LIMITS,
+} from "@/constants/arbo";
+import { AxiosError } from "axios";
+
 
 export async function GET(request: Request) {
   try {
-    const authHeader = request.headers.get('Authorization');
-
+    const authHeader = request.headers.get("Authorization");
     if (!authHeader) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const requestBody = { location_id: 10, limit: 1 };
-
-    const response = await axios.get<ArboDataResponse>(
-      `${process.env.NEXT_PUBLIC_API_URL}/data/getArboliticsDataset`,
+    const { searchParams } = new URL(request.url);
+    const limit = searchParams.get("limit")
+      ? parseInt(searchParams.get("limit")!, 10)
+      : TIME_LIMITS.daily;
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}${ARBOLITICS_DATASET_ENDPOINT}`,
       {
         headers: {
-          'Authorization': authHeader,
-          'Content-Type': 'application/json',
+          Authorization: authHeader,
+          "Content-Type": "application/json",
         },
-        data: requestBody,
+        data: JSON.stringify({ location_id: LOCATION_ID, limit }),
       }
     );
 
-    return NextResponse.json(response.data);
-  } catch (error) {
-    console.error('Arbo data fetch error:', error);
-    
-    if (error instanceof AxiosError) {
-      return NextResponse.json(
-        { message: error.response?.data?.message || 'Failed to fetch data' },
-        { status: error.response?.status || 500 }
-      );
-    }
+    const allData = response.data.data;
 
+    return NextResponse.json({
+      device_25_225: allData.filter(
+        (dataPoint: ArboDataPoint) => dataPoint.DID === DEVICE_IDS.DEVICE_1
+      ),
+      device_25_226: allData.filter(
+        (dataPoint: ArboDataPoint) => dataPoint.DID === DEVICE_IDS.DEVICE_2
+      ),
+    });
+  } catch (error: unknown) {
+    console.error("API Fetch Error:", error);
     return NextResponse.json(
-      { message: 'Internal server error' },
+      {
+        message:
+          (error as AxiosError).response?.data || "Internal server error",
+      },
       { status: 500 }
     );
   }

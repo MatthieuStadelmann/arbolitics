@@ -1,5 +1,5 @@
-import { cn } from '@/lib/utils';
 import { ButtonProps } from '@/types/ui';
+import { cn } from '@/utils/cn';
 
 export function Button({ 
   isLoading, 
