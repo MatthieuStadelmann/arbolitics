@@ -1,10 +1,6 @@
 import { ArboDataPoint, TimeRange } from "@/types/arbo";
 
-/**
- * Converts raw sensor value to human-readable format with one decimal place
- * @param value - Raw sensor value
- * @returns Decoded value with one decimal place
- */
+
 export const decodeValue = (value: number, min?: number): number => {
   if (min) {
     if (value < min) return 0;
@@ -12,11 +8,6 @@ export const decodeValue = (value: number, min?: number): number => {
   return Number((value / 10).toFixed(1));
 };
 
-/**
- * Gets the Monday date of a given week
- * @param date - Date to get Monday from
- * @returns Date object set to Monday of the week
- */
 const getMonday = (date: Date): Date => {
   const monday = new Date(date);
   const day = monday.getDay();
@@ -26,12 +17,7 @@ const getMonday = (date: Date): Date => {
   return monday;
 };
 
-/**
- * Calculates average values for grouped data points
- * @param grouped - Record of data points grouped by period
- * @param valueKey - Key of the value to average (e.g., 'tem1' or 'hum1')
- * @returns Array of averaged data points
- */
+
 const calculateAverages = (
   grouped: Record<string, ArboDataPoint[]>,
   valueKey: keyof Pick<ArboDataPoint, "tem1" | "hum1">
@@ -53,13 +39,7 @@ const calculateAverages = (
   });
 };
 
-/**
- * Aggregates data points based on time range
- * @param dataset - Array of data points
- * @param timeRange - Selected time range (daily/weekly/monthly)
- * @param valueKey - Key of the value to aggregate (e.g., 'tem1' or 'hum1')
- * @returns Aggregated data points
- */
+
 export const aggregateData = (
   dataset: ArboDataPoint[],
   timeRange: TimeRange,

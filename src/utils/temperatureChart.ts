@@ -2,12 +2,7 @@ import { ArboDataPoint, TimeRange } from "@/types/arbo";
 import { ChartSeries } from "@/types/charts";
 import { TEMPERATURE_CHART_CONSTANTS } from "@/constants/temperateChartConsts";
 import { TIME_RANGE_KEYS } from "@/constants/arbo";
-/**
- * Formats timestamp based on selected time range
- * @param timestamp - Unix timestamp in seconds
- * @param timeRange - Selected time range (daily/weekly/monthly)
- * @returns Formatted date string according to time range
- */
+
 export const formatDate = (timestamp: number, timeRange: TimeRange): string => {
   const date = new Date(timestamp * 1000);
   switch (timeRange) {
@@ -44,12 +39,6 @@ export const formatDate = (timestamp: number, timeRange: TimeRange): string => {
   }
 };
 
-/**
- * Filters X-axis labels based on time range
- * @param timeRange - Selected time range (daily/weekly/monthly)
- * @param xAxisLabels - Array of all X-axis labels
- * @returns Filtered array of labels
- */
 export const getXAxisLabels = (timeRange: TimeRange, xAxisLabels: string[]) => {
   switch (timeRange) {
     case TIME_RANGE_KEYS.WEEKLY:
@@ -63,12 +52,6 @@ export const getXAxisLabels = (timeRange: TimeRange, xAxisLabels: string[]) => {
   }
 };
 
-/**
- * Processes device data into chart series format
- * @param deviceData - Array of data points for a device
- * @param deviceConfig - Device name and color configuration
- * @returns Chart series configuration or null if no data
- */
 export const processTemperatureData = (
   deviceData: ArboDataPoint[],
   deviceConfig: {
@@ -93,11 +76,6 @@ export const processTemperatureData = (
   };
 };
 
-/**
- * Calculates Y-axis bounds with buffer
- * @param temps - Array of temperature values
- * @returns Minimum and maximum bounds for Y-axis
- */
 export const calculateAxisBounds = (temps: number[]) => {
   if (!temps.length) return { min: 0, max: 1 };
 
